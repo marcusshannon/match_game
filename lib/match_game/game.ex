@@ -8,13 +8,14 @@ defmodule MatchGame.Game do
       board: new_board(),
       to_delete: []
     }
+  end
 
   # Generates a new game board
   def new_board() do
     board_size = :width * :height
     # A board of empty slots
     board = List.duplicate(0, board_size)
-    Enum.each(0..board_size - 1, f(x) ->
+    Enum.each(0..board_size - 1, fn(x) ->
       generate_new_cell_no_match(x)
     end)
     board
@@ -31,6 +32,7 @@ defmodule MatchGame.Game do
     end
   end
 
+  #Generates a new cell at the index with no matches
   def generate_new_cell_no_match(index) do
     choices = [1, 2, 3, 4, 5]
     if (index < :width) and (index > 0) do
@@ -51,8 +53,8 @@ defmodule MatchGame.Game do
 
   #Deletes all the cells we have to delete
   def apply_deletions() do
-    board_size - :width * :height
-    Enum.each(0..board_size - 1, f(x) ->
+    board_size = :width * :height
+    Enum.each(0..board_size - 1, fn(x) ->
       # If we are supposed to delete this tile, do it
       if Enum.member?(:to_delete, x) do
         List.replace_at(:board, x, 0)
