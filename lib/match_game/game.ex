@@ -2,22 +2,20 @@ defmodule MatchGame.Game do
 
   def new do
     %{
-      board: new_board(),
       score: 0,
       width: 5,
       height: 10,
+      board: new_board(),
       to_delete: []
     }
 
   # Generates a new game board
   def new_board() do
-    choices = [1, 2, 3, 4, 5]
     board_size = :width * :height
     # A board of empty slots
     board = List.duplicate(0, board_size)
     Enum.each(0..board_size - 1, f(x) ->
-      val = Enum.random(choices)
-      List.replace_at(board, x - 1, val)
+      generate_new_cell_no_match(x)
     end)
     board
   end
@@ -33,7 +31,25 @@ defmodule MatchGame.Game do
     end
   end
 
+  def generate_new_cell_no_match(index) do
+    choices = [1, 2, 3, 4, 5]
+    if (index < :width) and (index > 0) do
+      left_val = Enum.at(:board, index - 1)
+      choices = List.delete(choices, left_val)
+    else
+      left_val = Enum.at(:board, index - 1)
+      bottom_val = Enum.at(:board, index - :width)
+      choices = List.delete(choices, left_val)
+      if List.member?(choices, bottom_val) do
+        choices = List.delete(choices, bottom_val)
+      end
+    end
 
+    List.replace_at(:board, index, Enum.random(choices))
+  end
+
+
+  #Deletes all the cells we have to delete
   def apply_deletions() do
     board_size - :width * :height
     Enum.each(0..board_size - 1, f(x) ->
@@ -41,6 +57,7 @@ defmodule MatchGame.Game do
       if Enum.member?(:to_delete, x) do
         List.replace_at(:board, x, 0)
         List.delete(:to_delete, x)
+        :score = :score + 1
       end
 
       if Enum.at(:board, x) == 0 do
@@ -50,8 +67,7 @@ defmodule MatchGame.Game do
           List.replace_at(:board, x, upperVal)
           List.replace_at(:board, x + :width, 0)
         else
-          newVal = Enum.random([1, 2, 3, 4, 5])
-          List.replace_at(:board, x, newVal)
+          generate_new_cell_no_match(x)
         end
       end
 
