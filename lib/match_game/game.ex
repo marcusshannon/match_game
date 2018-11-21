@@ -23,7 +23,17 @@ defmodule MatchGame.Game do
 
   #Swaps the values at p1 and p2 if they are adjacent
   def swap_vals(p1, p2) do
-    acceptable_indexs = [p1 + 1, p1 - 1, p1 - :width, p1 + :width]
+    acceptable_indexs = [p1 - :width, p1 + :width]
+    if (rem(p1, :width) != 0) and (rem(p1, :width) != :width - 1) do
+      acceptable_indexs ++ [p1 - 1, p1 + 1]
+    # Handles the case when p1 is on the edge of a row
+    else
+      if rem(p1, :width) == 0 do
+        acceptable_indexs ++ [p1 + 1]
+      else
+        acceptable_indexs ++ [p1 - 1]
+      end
+    end
     if Enum.member?(acceptable_indexs, p2) do
       val1 = Enum.at(:board, p1)
       val2 = Enum.at(:board, p2)
