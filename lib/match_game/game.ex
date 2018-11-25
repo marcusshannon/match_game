@@ -12,7 +12,7 @@ defmodule MatchGame.Game do
     }
     newboard = new_board(newgame)
     %{
-      score: [],
+      score: [0,0,0],
       width: 5,
       height: 10,
       board: newboard,
@@ -128,6 +128,7 @@ defmodule MatchGame.Game do
         current_score = Enum.at(game.score, game.active_player)
         current_score = if current_score == nil do 0 else current_score end
         game = Map.replace(game, :score, List.replace_at(game.score, game.active_player, current_score + combo))
+        IO.inspect(game.score)
         apply_deletions_loop(game, index + 1, combo)
       else
         apply_deletions_loop(game, index + 1, combo)
