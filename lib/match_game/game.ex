@@ -33,6 +33,7 @@ defmodule MatchGame.Game do
   end
 
   def create_board_loop(game, index, size) do
+    #Base case; we've been every where
     if index == size - 1 do
       game
     else
@@ -46,17 +47,21 @@ defmodule MatchGame.Game do
   def swap_vals(game, p1, p2, playernum) do
     if playernum == game.active_player do
       acceptable_indexs = [p1 - game.width, p1 + game.width]
+      # If we have a cell to our right, make it available for switching
       acceptable_indexs = acceptable_indexs ++ if rem(p1, game.width) < game.width - 1 do
         [p1 + 1]
       else
         []
       end
+      #If we have a cell to our left, make it available for switching
       acceptable_indexs = acceptable_indexs ++ if rem(p1, game.width) > 0 do
         [p1 - 1]
       else
         []
       end
 
+      # We've created a list of acceptable indexs to switch: is the
+      #Desired index in it?
       if Enum.member?(acceptable_indexs, p2) do
         val1 = Enum.at(game.board, p1)
         val2 = Enum.at(game.board, p2)
@@ -65,7 +70,9 @@ defmodule MatchGame.Game do
         game = Map.replace(game, :board, l2)
         #Only need to check for stability if the swap goes through
         check_for_stability(game, 1)
+      #If we can't make the move, just return the game state
       else
+        #TODO Possibly throw error?
         game
       end
     end
@@ -75,12 +82,14 @@ defmodule MatchGame.Game do
   #If turn based, advances the turns
   def check_for_stability(game, combo) do
     checkedGame = check_board_for_matches(game, 0)
+    #If there are no more matches on the board, the state is stable
     is_stable = length(checkedGame.to_delete) == 0
     if not is_stable do
+      #Replace all matches with 0s
       cleanGame = apply_deletions_loop(checkedGame, 0, combo)
+      #Drops values onto 0s
       game = dropdown(cleanGame, 0)
-      game
-      #check_for_stability(game, combo + 1)
+      check_for_stability(game, combo + 1)
     else
       #TODO Player changes
       new_active_player = 0
@@ -92,18 +101,21 @@ defmodule MatchGame.Game do
   #Generates a new cell at the index with no matches
   def generate_new_cell_no_match(game, index) do
     choices = [1, 2, 3, 4, 5]
-
+    #If we have a val to our left
     left_val = if rem(index, game.width) > 1 do
       Enum.at(game.board, index - 1)
     end
+    #If we have a val below us
     bottom_val = Enum.at(game.board, index - game.width)
 
+    #If the two in a row below us are the same, the third can't be that
     choices = if Enum.at(game.board, index - (2 * game.width)) == bottom_val do
       List.delete(choices, bottom_val)
     else
       choices
     end
 
+    #Same for the two to our left
     choices = if Enum.at(game.board, index - 2) == left_val do
       List.delete(choices, left_val)
     else
@@ -123,12 +135,13 @@ defmodule MatchGame.Game do
       game
     else
       if Enum.member?(game.to_delete, index) do
+        #Replace the cell value with a 0, mark it for deletion
         game = Map.replace(game, :board, List.replace_at(game.board, index, 0))
         game = Map.replace(game, :to_delete, List.delete(game.to_delete, index))
+        #Update the score for this player
         current_score = Enum.at(game.score, game.active_player)
         current_score = if current_score == nil do 0 else current_score end
         game = Map.replace(game, :score, List.replace_at(game.score, game.active_player, current_score + combo))
-        IO.inspect(game.score)
         apply_deletions_loop(game, index + 1, combo)
       else
         apply_deletions_loop(game, index + 1, combo)
@@ -142,13 +155,16 @@ defmodule MatchGame.Game do
     if index >= board_size do
       game
     else
+      #If this value is a 0, replace it
       if Enum.at(game.board, index) == 0 do
+        #If we're not at the top, take the value from above you
         if (index + game.width < board_size) do
           upperVal = Enum.at(game.board, index + game.width)
           tempBoard = List.replace_at(game.board, index, upperVal)
           tempBoard = List.replace_at(tempBoard, index + game.width, 0)
           game = Map.replace(game, :board, tempBoard)
           dropdown(game, index + 1)
+          #If we're at the top, just make a new value
         else
           game = Map.replace(game, :board, generate_new_cell_no_match(game, index))
           dropdown(game, index + 1)
@@ -161,10 +177,8 @@ defmodule MatchGame.Game do
 
   # Returns the game state with to_deletes filled out
   def check_board_for_matches(game, index) do
-    IO.inspect("Checking board for matches")
     board_size = game.width * game.height
     if index >= board_size do
-      IO.inspect("Done checking board for matches")
       game
     else
       index_x = rem(index, game.width)
