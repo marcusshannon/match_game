@@ -101,6 +101,7 @@ defmodule MatchGame.Game do
   #Generates a new cell at the index with no matches
   def generate_new_cell_no_match(game, index) do
     choices = [1, 2, 3, 4, 5]
+    special_tiles = [6 , 7]
     #If we have a val to our left
     left_val = if rem(index, game.width) > 1 do
       Enum.at(game.board, index - 1)
@@ -122,7 +123,11 @@ defmodule MatchGame.Game do
       choices
     end
 
-    newVal = Enum.random(choices)
+    newVal = if :rand.uniform(10) == 10 do
+      Enum.random(choices)
+    else
+      Enum.random(special_tiles)
+
     List.insert_at(game.board, index, newVal)
 
   end
@@ -264,7 +269,7 @@ defmodule MatchGame.Game do
     check_for_stability(game, 1)
   end
 
-  
+
 
 
 
