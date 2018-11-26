@@ -116,6 +116,7 @@ defmodule MatchGame.Game do
   def generate_new_cell_no_match(game, index) do
     choices = [1, 2, 3, 4, 5]
     special_tiles = [6, 7]
+    board_size = game.width * game.height
     # If we have a val to our left
     left_val =
       if rem(index, game.width) > 1 do
@@ -142,7 +143,7 @@ defmodule MatchGame.Game do
       end
 
     newVal =
-      if :rand.uniform(15) != 15 do
+      if :rand.uniform(board_size / 2) != board_size / 2 do
         Enum.random(choices)
       else
         Enum.random(special_tiles)
