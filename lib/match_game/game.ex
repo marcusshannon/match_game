@@ -14,7 +14,9 @@ defmodule MatchGame.Game do
   end
 
   def add_player(game, player_id) do
-    Map.update(game, :players, [], &(&1 ++ [player_id]))
+    game = Map.update(game, :players, [], &(&1 ++ [player_id]))
+    scores = list.insert_at(game.score, player_id, 0)
+    Map.replace(game, :score, scores)
   end
 
   # Generates a new game board
@@ -65,9 +67,23 @@ defmodule MatchGame.Game do
         val2 = Enum.at(game.board, p2)
         l1 = List.replace_at(game.board, p1, val2)
         l2 = List.replace_at(l1, p2, val1)
-        game = Map.replace(game, :board, l2)
+
+
+        game2 = Map.replace(game, :board, l2)
         # Only need to check for stability if the swap goes through
-        check_for_stability(game, 1)
+
+        #Only make the switched game ours if the switch would create matches
+        checkedGame = check_board_for_matches(game2, 1)
+        #If theres's nothing to delete, there were no matches, move should not
+        #go through
+        if length(checkedGame.to_delete) == 0 do
+          game
+        else
+          #If there's something to delete, go ahead and make the swap bc
+          #it will lead to a match
+          check_for_stability(game2, 1)
+        end
+
         # If we can't make the move, just return the game state
       else
         # TODO Possibly throw error?
@@ -90,7 +106,8 @@ defmodule MatchGame.Game do
       game = dropdown(cleanGame, 0)
       check_for_stability(game, combo + 1)
     else
-      new_active_player = rem(game.active_player + 1, length(game.players))
+      player_length = if length(game.players) == 0 do 1 else length(game.players) end
+      new_active_player = rem(game.active_player + 1, player_length)
       Map.replace(game, :active_player, new_active_player)
     end
   end
