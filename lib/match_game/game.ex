@@ -39,7 +39,7 @@ defmodule MatchGame.Game do
 
   def create_board_loop(game, index, size) do
     #Base case; we've been every where
-    if index == size - 1 do
+    if index == size do
       game
     else
       newBoard = generate_new_cell_no_match(game, index)
@@ -128,13 +128,13 @@ defmodule MatchGame.Game do
       choices
     end
 
-    newVal = if :rand.uniform(10) == 10 do
+    newVal = if :rand.uniform(15) != 15 do
       Enum.random(choices)
     else
       Enum.random(special_tiles)
     end
 
-    List.insert_at(game.board, index, newVal)
+    List.replace_at(game.board, index, newVal)
 
   end
 
