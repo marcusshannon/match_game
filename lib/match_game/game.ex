@@ -23,6 +23,11 @@ defmodule MatchGame.Game do
 
   end
 
+  def add_player(game, player_name) do
+    Map.replace(game, :players, game.players ++ [player_name])
+    game
+  end
+
   # Generates a new game board
   def new_board(game) do
     board_size = game.width * game.height
