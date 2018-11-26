@@ -17,15 +17,18 @@ defmodule MatchGame.Game do
       height: 10,
       board: newboard,
       to_delete: [],
-      players: [],
+      players: [temp],
       active_player: 0
     }
 
   end
 
   def add_player(game, player_name) do
-    Map.replace(game, :players, game.players ++ [player_name])
-    game
+    if length(game.players) == 1 do
+      Map.replace(game, :playes, [player_name])
+    else
+      Map.replace(game, :players, game.players ++ [player_name])
+    end
   end
 
   # Generates a new game board
@@ -96,8 +99,7 @@ defmodule MatchGame.Game do
       game = dropdown(cleanGame, 0)
       check_for_stability(game, combo + 1)
     else
-      #TODO Player changes
-      new_active_player = 0
+      new_active_player = rem(game.active_player + 1, length(game.players))
       Map.replace(game, :active_player, new_active_player)
     end
 
