@@ -242,5 +242,30 @@ defmodule MatchGame.Game do
     end
   end
 
+  #Explodes the 3x3 square around the bomb tile
+  def bomb_super_power(game, x, y) do
+    index = (y * game.width) + x
+    deletions = [index, index + 1, index -1]
+    deletions = deletions ++ [index + game.width, index + game.width - 1, index + game.width + 1]
+    deletions = deletions ++ [index - game.width, index - game.width - 1, index + game.width + 1]
+    total_deletions = deletions ++ game.to_delete
+    newGame = Map.put(game, :to_delete, total_deletions)
+    check_for_stability(game, 1)
+  end
+
+  #Swap any two tiles, not necesarily adjacent
+  def any_swap_super_power(game, p1, p2) do
+    val1 = Enum.at(game.board, p1)
+    val2 = Enum.at(game.board, p2)
+    l1 = List.replace_at(game.board, p1, val2)
+    l2 = List.replace_at(l1, p2, val1)
+    game = Map.replace(game, :board, l2)
+
+    check_for_stability(game, 1)
+  end
+
+  
+
+
 
 end
