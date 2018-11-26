@@ -7,7 +7,8 @@ defmodule MatchGame.Game do
       board: [],
       to_delete: [],
       players: [],
-      active_player: 0
+      active_player: 0,
+      turns_remaining: []
     }
 
     new_board(new_game)
@@ -15,8 +16,26 @@ defmodule MatchGame.Game do
 
   def add_player(game, player_id) do
     game = Map.update(game, :players, [], &(&1 ++ [player_id]))
-    scores = list.insert_at(game.score, player_id, 0)
-    Map.replace(game, :score, scores)
+    scores = List.insert_at(game.score, player_id, 0)
+    turns_left = List.insert_at(game.turns_remaining, player_id, -1)
+    game = Map.replace(game, :score, scores)
+    Map.replace(game, :turns_remaining, turns_left)
+  end
+
+  #Abstract version of turns remaining
+  def set_turns_for_all(game, turns) do
+    set_turns_remaining_for_all_players(game, turns, 0)
+  end
+
+  #Sets the turns remaining for all players in the game to the given turns value
+  def set_turns_remaining_for_all_players(game, turns, index) do
+    if index == length(game.players) do
+      game
+    else
+      newTurnsRemaining = List.replace_at(game.turns_remaining, index, turns)
+      game = Map.replace(game, :turns_remaining, newTurnsRemaining)
+      set_turns_remaining_for_all_players(game, turns, index + 1)
+    end
   end
 
   # Generates a new game board
@@ -40,7 +59,7 @@ defmodule MatchGame.Game do
 
   # Swaps the values at p1 and p2 if they are adjacent
   def swap_vals(game, p1, p2, playernum) do
-    if playernum == game.active_player do
+    if playernum == game.active_player and Enum.at(game.turns_remaining, playernum) != 0 do
       acceptable_indexs = [p1 - game.width, p1 + game.width]
       # If we have a cell to our right, make it available for switching
       acceptable_indexs =
@@ -107,6 +126,9 @@ defmodule MatchGame.Game do
       check_for_stability(game, combo + 1)
     else
       player_length = if length(game.players) == 0 do 1 else length(game.players) end
+      turns_left = Enum.at(game.turns_remaining, game.active_player)
+      turns_left = List.replace_at(game.turns_remaining, game.active_player, turns_left - 1)
+      game = Map.replace(game, :turns_remaining, turns_left)
       new_active_player = rem(game.active_player + 1, player_length)
       Map.replace(game, :active_player, new_active_player)
     end
@@ -117,6 +139,7 @@ defmodule MatchGame.Game do
     choices = [1, 2, 3, 4, 5]
     special_tiles = [6, 7]
     board_size = game.width * game.height
+    half_board = div(board_size, 2)
     # If we have a val to our left
     left_val =
       if rem(index, game.width) > 1 do
@@ -143,7 +166,7 @@ defmodule MatchGame.Game do
       end
 
     newVal =
-      if :rand.uniform(board_size / 2) != board_size / 2 do
+      if :rand.uniform(half_board) != half_board do
         Enum.random(choices)
       else
         Enum.random(special_tiles)
