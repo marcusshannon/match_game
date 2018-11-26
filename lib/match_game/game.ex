@@ -132,6 +132,7 @@ defmodule MatchGame.Game do
       Enum.random(choices)
     else
       Enum.random(special_tiles)
+    end
 
     List.insert_at(game.board, index, newVal)
 
@@ -252,15 +253,28 @@ defmodule MatchGame.Game do
     end
   end
 
+
+  def active_special_tile(game, x, y) do
+    index = (y * game.width) + x
+    val = Enum.at(game.board, index)
+    if val == 6 do
+      bomb_super_power(game, x, y)
+    else
+      if val == 7 do
+
+      end
+    end
+  end
+
   #Explodes the 3x3 square around the bomb tile
   def bomb_super_power(game, x, y) do
     index = (y * game.width) + x
-    deletions = [index, index + 1, index -1]
+    deletions = [index, index + 1, index - 1]
     deletions = deletions ++ [index + game.width, index + game.width - 1, index + game.width + 1]
     deletions = deletions ++ [index - game.width, index - game.width - 1, index + game.width + 1]
     total_deletions = deletions ++ game.to_delete
     newGame = Map.put(game, :to_delete, total_deletions)
-    check_for_stability(game, 1)
+    check_for_stability(newGame, 1)
   end
 
   #Swap any two tiles, not necesarily adjacent
