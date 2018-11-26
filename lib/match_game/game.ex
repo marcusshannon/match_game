@@ -111,6 +111,17 @@ defmodule MatchGame.Game do
     end
   end
 
+  # Performs swap agnostically
+  def perform_swap(game, p1, p2) do
+    val1 = Enum.at(game.board, p1)
+    val2 = Enum.at(game.board, p2)
+    l1 = List.replace_at(game.board, p1, val2)
+    l2 = List.replace_at(l1, p2, val1)
+
+
+    Map.replace(game, :board, l2)
+  end
+
   # Resolves as many falls as necesary
   # If turn based, advances the turns
   def check_for_stability(game, combo) do
@@ -330,12 +341,33 @@ defmodule MatchGame.Game do
 
   # Swap any two tiles, not necesarily adjacent
   def any_swap_super_power(game, p1, p2) do
-    val1 = Enum.at(game.board, p1)
-    val2 = Enum.at(game.board, p2)
-    l1 = List.replace_at(game.board, p1, val2)
-    l2 = List.replace_at(l1, p2, val1)
-    game = Map.replace(game, :board, l2)
+    game = perform_swap(game, p1, p2)
 
     check_for_stability(game, 1)
+  end
+
+
+  # Returns true if any moves can be made anywhere on the game board
+  def can_any_moves_be_made(game, index) do
+    board_size = game.width * game.height
+    if index == board_size do
+      false
+    else
+      #Try swapping right
+      game = perform_swap(game, index, index + 1)
+      game = check_board_for_matches(game, 0)
+      if length(game.to_delete) != 0 do
+        true
+      else
+        #Try swapping up
+        game = perform_swap(game, index, index + game.width)
+        game = check_board_for_matches(game, 0)
+        if length(game.to_delete) != 0 do
+          true
+        else
+          can_any_moves_be_made(game, index + 1)
+        end
+      end
+    end
   end
 end
