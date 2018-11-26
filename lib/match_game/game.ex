@@ -2,8 +2,8 @@ defmodule MatchGame.Game do
   def new do
     new_game = %{
       score: [],
-      width: 5,
-      height: 10,
+      width: 8,
+      height: 8,
       board: [],
       to_delete: [],
       players: [],
