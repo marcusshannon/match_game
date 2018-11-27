@@ -1,0 +1,22 @@
+<div class="rounded p-3 shadow-md bg-white min-w-64">
+  <h1 class="mb-2 text-center">Log in</h1>
+
+  <%= if assigns[:state] == :error do %>
+  <div class="mb-2 bg-red-lightest p-3 rounded text-red-dark text-center">
+    Incorrect email and/or password
+  </div>
+  <% end %> <%= if assigns[:state] == :unverified do %>
+  <div class="mb-2 bg-red-lightest p-3 rounded text-red-dark text-center">
+    Please verify your email
+  </div>
+  <% end %> <%= form_for @conn, Routes.user_path(@conn, :verify), [as: :user,
+  class: "flex flex-col"], fn f -> %>
+  <div class="mb-2">
+    <%= text_input f, :email, placeholder: "email", class: "w-full"%>
+  </div>
+  <div class="mb-2">
+    <%= password_input f, :password, placeholder: "password", class: "w-full" %>
+  </div>
+  <div><%= submit "Log in", class: "w-full" %></div>
+  <% end %>
+</div>

@@ -11,9 +11,11 @@ defmodule MatchGame.Application do
       # Start the Ecto repository
       MatchGame.Repo,
       # Start the endpoint when the application starts
-      MatchGameWeb.Endpoint
+      MatchGameWeb.Endpoint,
       # Starts a worker by calling: MatchGame.Worker.start_link(arg)
       # {MatchGame.Worker, arg},
+      {DynamicSupervisor, [strategy: :one_for_one, name: MatchGame.Store.Supervisor]},
+      {Registry, [keys: :unique, name: MatchGame.Store.Registry]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

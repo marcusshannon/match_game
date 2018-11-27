@@ -1,0 +1,51 @@
+<div class="bg-white p-4 rounded">
+  <h1 class="text-center mb-4 text-indigo"><%= @user.email %></h1>
+  <div class="text-center mb-4 w-full"><%= link("log out", to: "/log_out", class: "no-underline text-indigo border border-indigo p-2 rounded inline-block w-full") %></div>
+
+  <%= if @state == :game_not_found do %>
+  <div class="mb-2 bg-red-lightest p-3 rounded text-red text-center">
+    Game not found
+  </div>
+  <% end %>
+
+  <div class="bg-grey-lightest rounded p-4 shadow">
+    <%= form_for @conn, Routes.page_path(@conn, :join), [class: "flex
+    flex-col"], fn f -> %>
+
+    <div>
+      <%= text_input f, :game, placeholder: "Game id", class: "w-full mb-2" %>
+    </div>
+    <div><%= submit "Join Game", class: "w-full" %></div>
+    <% end %>
+  </div>
+  <div class="bg-grey-lightest p-4 my-4 rounded shadow">
+    <div class="my-4">
+      <%= button("New Game", to: "/game/new", method: "get", class: "w-full
+      mb-2") %>
+    </div>
+  </div>
+
+  <div class="bg-grey-lightest p-4 my-4 rounded shadow">
+    <h1 class="mb-4 text-center">Game history</h1>
+
+    <table class="w-full table-auto mb-4" cellpadding="10px">
+      <tr class="bg-indigo text-white rounded text-sm font-normal">
+        <th class="text-center">Score</th>
+        <th class="text-center">Winner</th>
+        <th class="text-center">Date</th>
+      </tr>
+
+      <%= for result <- @results do %>
+      <tr class="text-center p-2 rounded">
+        <td><%= result.score %></td>
+        <td><%= result.result.winner.email %></td>
+        <td>
+          <%=
+          "#{result.inserted_at.year}-#{result.inserted_at.month}-#{result.inserted_at.day}"
+          %>
+        </td>
+      </tr>
+      <% end %>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+<h1>Listing Results</h1>
+
+<table>
+  <thead>
+    <tr>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for result <- @results do %>
+    <tr>
+
+      <td>
+        <%= link "Show", to: Routes.result_path(@conn, :show, result) %>
+        <%= link "Edit", to: Routes.result_path(@conn, :edit, result) %>
+        <%= link "Delete", to: Routes.result_path(@conn, :delete, result), method: :delete, data: [confirm: "Are you sure?"] %>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Result", to: Routes.result_path(@conn, :new) %></span>

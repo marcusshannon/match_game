@@ -1,0 +1,22 @@
+<div class="shadow-md p-3 rounded bg-white min-w-64">
+  <h1 class="mb-2 text-center text-indigo">New User</h1>
+  
+  <%= form_for @changeset, Routes.user_path(@conn, :create), [class: "flex flex-col"], fn f -> %>
+    <%= if @changeset.action do %>
+      <div class="mb-2 bg-yellow-lighter text-orange rounded p-3">
+        <p>Oops, something went wrong! Please check the errors below.</p>
+      </div>
+    <% end %>
+  <div>
+      <%= text_input f, :email, placeholder: "email", class: "w-full mb-2" %>
+      <%= error_tag f, :email, class: "bg-red-lightest text-red p-2 mb-2 rounded text-center"%>
+  </div>
+  <div>
+    <%= password_input f, :password, placeholder: "password", class: "w-full mb-2" %>
+    <%= error_tag f, :password, class: "bg-red-lightest text-red p-2 mb-2 rounded text-center"%>
+  </div>
+    <div>
+      <%= submit "Sign up", class: "w-full" %>
+    </div>
+  <% end %>
+</div> 

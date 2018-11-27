@@ -1,0 +1,8 @@
+<h1>Show Result</h1>
+
+<ul>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.result_path(@conn, :edit, @result) %></span>
+<span><%= link "Back", to: Routes.result_path(@conn, :index) %></span>

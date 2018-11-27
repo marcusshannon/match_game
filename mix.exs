@@ -20,7 +20,7 @@ defmodule MatchGame.MixProject do
   def application do
     [
       mod: {MatchGame.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :bamboo]
     ]
   end
 
@@ -42,7 +42,11 @@ defmodule MatchGame.MixProject do
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+      {:comeonin, "~> 4.1"},
+      {:bcrypt_elixir, "~> 1.1"},
+      {:bamboo, "~> 1.1"},
+      {:nanoid, "~> 1.0"}
     ]
   end
 

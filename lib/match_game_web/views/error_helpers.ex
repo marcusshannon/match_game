@@ -8,9 +8,10 @@ defmodule MatchGameWeb.ErrorHelpers do
   @doc """
   Generates tag for inlined form input errors.
   """
-  def error_tag(form, field) do
+  def error_tag(form, field, opts \\ []) do
     Enum.map(Keyword.get_values(form.errors, field), fn error ->
-      content_tag(:span, translate_error(error), class: "help-block")
+      prefix = String.capitalize(Atom.to_string(field))
+      content_tag(:div, prefix <> " " <> translate_error(error), class: opts[:class])
     end)
   end
 
