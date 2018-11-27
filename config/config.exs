@@ -25,10 +25,10 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-# Import environment specific config. This must remain at the bottom
-# of this file so it overrides the configuration defined above.
-import_config "#{Mix.env()}.exs"
-
 config :match_game, MatchGame.Mailer,
   adapter: Bamboo.SendGridAdapter,
   api_key: "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"
+
+# Import environment specific config. This must remain at the bottom
+# of this file so it overrides the configuration defined above.
+import_config "#{Mix.env()}.exs"

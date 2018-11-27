@@ -46,7 +46,8 @@ defmodule MatchGame.MixProject do
       {:comeonin, "~> 4.1"},
       {:bcrypt_elixir, "~> 1.1"},
       {:bamboo, "~> 1.1"},
-      {:nanoid, "~> 1.0"}
+      {:nanoid, "~> 1.0"},
+      {:distillery, "~> 2.0"}
     ]
   end
 

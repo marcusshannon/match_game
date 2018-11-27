@@ -38,7 +38,6 @@ defmodule MatchGameWeb.GameChannel do
   end
 
   def handle_in("swap", %{"tile1" => tile1, "tile2" => tile2}, socket) do
-    IO.inspect(self)
     game_id = socket.assigns[:game_id]
 
     next_state =
