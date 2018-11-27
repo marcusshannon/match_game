@@ -1,3 +1,7 @@
+# Attribution
+Font: https://rsms.me/inter/
+Backgrounds: https://www.heropatterns.com/
+
 # MatchGame
 
 To start your Phoenix server:
